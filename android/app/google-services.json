@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "794348651802",
+    "project_id": "sample-project-b5bd0",
+    "storage_bucket": "sample-project-b5bd0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:794348651802:android:423df3e46f5f35e1c758a3",
+        "android_client_info": {
+          "package_name": "com.example.firebasework"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCnfsINM3bT7_fczlGDp6JJkCWnnV8Uy6w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
