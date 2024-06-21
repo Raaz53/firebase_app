@@ -1,16 +1,18 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebasework/models/user_model.dart';
 import 'package:firebasework/screens/spash_page.dart';
+import 'package:firebasework/services/user_data.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class AuthServices {
   static final FirebaseAuth auth = FirebaseAuth.instance;
+  static final userRepo = Get.put(UserData());
 
-  static Future<User?> createUser(
-    String email,
-    String password,
-  ) async {
+  static Future<User?> registerUser(UserModel users) async {
     final userCred = await auth.createUserWithEmailAndPassword(
-        email: email, password: password);
+        email: users.email, password: users.password);
+    await userRepo.createUser(users);
     final user = userCred.user;
     return user;
   }

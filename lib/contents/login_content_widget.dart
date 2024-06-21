@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:firebasework/models/user_model.dart';
 import 'package:firebasework/screens/home_page.dart';
 import 'package:firebasework/services/auth.dart';
 import 'package:firebasework/widgets/circular_icon_widget.dart';
@@ -30,6 +33,7 @@ class _LoginContentWidgetState extends State<LoginContentWidget> {
   TextEditingController username = TextEditingController();
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
+  TextEditingController phoneNumber = TextEditingController();
 
   @override
   void dispose() {
@@ -61,8 +65,12 @@ class _LoginContentWidgetState extends State<LoginContentWidget> {
           Utils.toastMessage(error.toString());
         });
       } else {
-        AuthServices.createUser(email.text.toString(), password.text.toString())
-            .then((onValue) {
+        UserModel users = UserModel(
+            username: username.text.toString(),
+            email: email.text.toString(),
+            phoneNumber: phoneNumber.text.toString(),
+            password: password.text.toString());
+        AuthServices.registerUser(users).then((onValue) {
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => const HomePage()),
@@ -70,6 +78,7 @@ class _LoginContentWidgetState extends State<LoginContentWidget> {
           );
         }).onError((error, stackTrace) {
           _loading = false;
+          log('Error: $error');
           Utils.toastMessage(error.toString());
         });
       }
@@ -99,8 +108,15 @@ class _LoginContentWidgetState extends State<LoginContentWidget> {
                     style: FontStructure.heading1,
                   ),
                   widget.signUp
-                      ? TextFormWidget(
-                          controller: username, hintText: 'Username')
+                      ? Column(
+                          children: [
+                            TextFormWidget(
+                                controller: username, hintText: 'Username'),
+                            TextFormWidget(
+                                controller: phoneNumber,
+                                hintText: 'Phone Number'),
+                          ],
+                        )
                       : const SizedBox(),
                   TextFormWidget(
                     controller: email,

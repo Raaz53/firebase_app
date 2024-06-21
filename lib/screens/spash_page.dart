@@ -14,7 +14,6 @@ class SplashPage extends StatelessWidget {
     return StreamBuilder(
       stream: AuthServices.auth.authStateChanges(),
       builder: (BuildContext context, AsyncSnapshot<User?> snapshot) {
-        log('Stream Data : ${snapshot.data}');
         if (snapshot.hasData) {
           return const HomePage();
         }
