@@ -14,7 +14,9 @@ final _formKey = GlobalKey<FormState>();
 class LoginContentWidget extends StatefulWidget {
   const LoginContentWidget({
     super.key,
+    required this.signUp,
   });
+  final bool signUp;
 
   @override
   State<LoginContentWidget> createState() => _LoginContentWidgetState();
@@ -23,14 +25,17 @@ class LoginContentWidget extends StatefulWidget {
 class _LoginContentWidgetState extends State<LoginContentWidget> {
   Color buttonColor = Colors.blue;
 
+  bool _loading = false;
+
   TextEditingController username = TextEditingController();
+  TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
 
   @override
   void dispose() {
     // TODO: implement dispose
     super.dispose();
-    username.dispose();
+    email.dispose();
     password.dispose();
   }
 
@@ -41,109 +46,125 @@ class _LoginContentWidgetState extends State<LoginContentWidget> {
       }
     });
     if (_formKey.currentState!.validate()) {
+      _loading = true;
       buttonColor = Colors.blue;
-      AuthServices.auth
-          .signInWithEmailAndPassword(
-              email: username.text.toString(),
-              password: password.text.toString())
-          .then((onValue) {
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => HomePage()),
-          (route) => false,
-        );
-      }).onError((error, stackTrace) {
-        Utils.toastMessage(error.toString());
-      });
-      // AuthServices.auth
-      //     .createUserWithEmailAndPassword(
-      //         email: username.text.toString(),
-      //         password: password.text.toString())
-      //     .then((onValue) {})
-      //     .onError((error, stackTrace) {
-      //   Utils.toastMessage(error.toString());
-      // });
-      // Navigator.pushAndRemoveUntil(
-      //   context,
-      //   MaterialPageRoute(builder: (context) => HomePage()),
-      //   (route) => false,
-      // );
+      if (!widget.signUp) {
+        AuthServices.getUser(email.text.toString(), password.text.toString())
+            .then((onValue) {
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => const HomePage()),
+            (route) => false,
+          );
+        }).onError((error, stackTrace) {
+          _loading = false;
+          Utils.toastMessage(error.toString());
+        });
+      } else {
+        AuthServices.createUser(email.text.toString(), password.text.toString())
+            .then((onValue) {
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => const HomePage()),
+            (route) => false,
+          );
+        }).onError((error, stackTrace) {
+          _loading = false;
+          Utils.toastMessage(error.toString());
+        });
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-        padding: const EdgeInsets.all(15),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                height: 50,
-              ),
-              Image.asset(
-                ImagePaths.loginTopImage,
-                fit: BoxFit.cover,
-              ),
-              const SizedBox(
-                height: 30,
-              ),
-              Text(
-                'Login Details',
-                style: FontStructure.heading1,
-              ),
-              TextFormWidget(
-                controller: username,
-                hintText: 'Username, email & phone number',
-              ),
-              TextFormWidget(
-                controller: password,
-                hintText: 'Password',
-                obsecured: true,
-              ),
-              Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                    onPressed: () {},
-                    child: Text(
-                      'Forgot Password?',
-                      style: FontStructure.bodyText1,
-                    )),
-              ),
-              GestureDetector(
-                onTap: onClicked,
-                child: Container(
-                  alignment: Alignment.center,
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                      color: buttonColor,
-                      borderRadius: BorderRadius.all(Radius.circular(10))),
-                  child: Text(
-                    'Login',
-                    style: FontStructure.button,
-                  ),
-                ),
-              ),
-              OrSignUpWithWidget(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+    return SafeArea(
+      child: Padding(
+          padding: const EdgeInsets.all(15),
+          child: Form(
+            key: _formKey,
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  CircularIconWidget(
-                    imagePath: ImagePaths.googleLogo,
+                  Image.asset(
+                    ImagePaths.loginTopImage,
+                    fit: BoxFit.cover,
                   ),
-                  CircularIconWidget(
-                    imagePath: ImagePaths.facebookLogo,
+                  const SizedBox(
+                    height: 30,
                   ),
-                  CircularIconWidget(
-                    imagePath: ImagePaths.appleLogo,
+                  Text(
+                    widget.signUp ? 'Sign Up Details' : 'Login Details',
+                    style: FontStructure.heading1,
+                  ),
+                  widget.signUp
+                      ? TextFormWidget(
+                          controller: username, hintText: 'Username')
+                      : const SizedBox(),
+                  TextFormWidget(
+                    controller: email,
+                    hintText: widget.signUp
+                        ? 'email'
+                        : 'Username, email & phone number',
+                  ),
+                  TextFormWidget(
+                    controller: password,
+                    hintText: 'Password',
+                    obsecured: true,
+                  ),
+                  widget.signUp
+                      ? Align(
+                          alignment: Alignment.centerRight,
+                          child: TextButton(
+                              onPressed: () {},
+                              child: Text(
+                                'Forgot Password?',
+                                style: FontStructure.bodyText1,
+                              )),
+                        )
+                      : const SizedBox(
+                          height: 20,
+                        ),
+                  GestureDetector(
+                    onTap: onClicked,
+                    child: Container(
+                      alignment: Alignment.center,
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                          color: buttonColor,
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(10))),
+                      child: _loading
+                          ? const CircularProgressIndicator(
+                              color: Colors.white,
+                            )
+                          : Text(
+                              widget.signUp ? 'Sign Up' : 'Login',
+                              style: FontStructure.button,
+                            ),
+                    ),
+                  ),
+                  const OrSignUpWithWidget(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircularIconWidget(
+                        imagePath: ImagePaths.googleLogo,
+                      ),
+                      CircularIconWidget(
+                        imagePath: ImagePaths.facebookLogo,
+                      ),
+                      CircularIconWidget(
+                        imagePath: ImagePaths.appleLogo,
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ],
-          ),
-        ));
+            ),
+          )),
+    );
   }
 }

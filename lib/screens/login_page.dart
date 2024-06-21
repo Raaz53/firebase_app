@@ -3,7 +3,9 @@ import 'package:firebasework/resources/image_paths.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+  const LoginPage({super.key, required this.condition});
+
+  final bool condition;
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -19,7 +21,9 @@ class _LoginPageState extends State<LoginPage> {
           Align(
               alignment: Alignment.bottomCenter,
               child: Image.asset(ImagePaths.loginBottomImage)),
-          LoginContentWidget(),
+          LoginContentWidget(
+            signUp: widget.condition,
+          ),
         ],
       ),
     );
