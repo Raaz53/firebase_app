@@ -26,9 +26,19 @@ class AuthServices {
 
   static void signingOut(BuildContext context) async {
     await auth.signOut();
+
     Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => SplashPage()),
         (route) => false);
+  }
+
+  static getUserData() {
+    final email = auth.currentUser?.email;
+    if (email != null) {
+      return userRepo.getUserDetails(email);
+    } else {
+      Get.snackbar('Error', 'Inside getUserData');
+    }
   }
 }

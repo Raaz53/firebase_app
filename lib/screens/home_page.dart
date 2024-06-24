@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebasework/screens/user_page.dart';
 import 'package:firebasework/services/auth.dart';
 import 'package:firebasework/widgets/alert_dialog_box.dart';
 import 'package:flutter/material.dart';
@@ -28,7 +29,11 @@ class _HomePageState extends State<HomePage> {
         actions: [
           IconButton(
               onPressed: () => AlertDialogBox.sigingOut(context),
-              icon: const Icon(Icons.logout))
+              icon: const Icon(Icons.logout)),
+          IconButton(
+              onPressed: () => Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => UserPage())),
+              icon: Icon(Icons.person))
         ],
       ),
     );

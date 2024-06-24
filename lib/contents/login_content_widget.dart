@@ -130,17 +130,25 @@ class _LoginContentWidgetState extends State<LoginContentWidget> {
                     obsecured: true,
                   ),
                   widget.signUp
-                      ? Align(
+                      ? const SizedBox(
+                          height: 20,
+                        )
+                      : Align(
                           alignment: Alignment.centerRight,
                           child: TextButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    behavior: SnackBarBehavior.floating,
+                                    backgroundColor: Colors.red,
+                                    content: Text('Not Impl'),
+                                  ),
+                                );
+                              },
                               child: Text(
                                 'Forgot Password?',
                                 style: FontStructure.bodyText1,
                               )),
-                        )
-                      : const SizedBox(
-                          height: 20,
                         ),
                   GestureDetector(
                     onTap: onClicked,

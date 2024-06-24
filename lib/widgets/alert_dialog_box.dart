@@ -16,7 +16,11 @@ class AlertDialogBox {
             ),
             actions: [
               TextButton(
-                  onPressed: () => AuthServices.signingOut(context),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+
+                    AuthServices.signingOut(context);
+                  },
                   child: Text(
                     'Yes',
                     style: FontStructure.bodyText2,
