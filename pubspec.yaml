@@ -37,7 +37,10 @@ dependencies:
   cloud_firestore: ^5.0.1
   get: ^4.6.6
   flutter_easyloading: ^3.0.5
-
+  get_it: ^7.7.0
+  image_picker: ^1.1.2
+  flutter_native_splash: ^2.4.0
+  firebase_storage: ^12.0.1
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
@@ -95,3 +98,7 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+flutter_native_splash:
+  color: "#36454F"
+  image: assets/icons/firebase.png
+  android_12:

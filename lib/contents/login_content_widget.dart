@@ -1,8 +1,8 @@
 import 'dart:developer';
-
 import 'package:firebasework/models/user_model.dart';
 import 'package:firebasework/screens/home_page.dart';
 import 'package:firebasework/services/auth.dart';
+import 'package:firebasework/widgets/circular_avatar_widget.dart';
 import 'package:firebasework/widgets/circular_icon_widget.dart';
 import 'package:firebasework/widgets/or_sign_up_with_widget.dart';
 import 'package:flutter/material.dart';
@@ -34,6 +34,7 @@ class _LoginContentWidgetState extends State<LoginContentWidget> {
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
   TextEditingController phoneNumber = TextEditingController();
+  late String? profile;
 
   @override
   void dispose() {
@@ -41,6 +42,8 @@ class _LoginContentWidgetState extends State<LoginContentWidget> {
     super.dispose();
     email.dispose();
     password.dispose();
+    username.dispose();
+    phoneNumber.dispose();
   }
 
   void onClicked() {
@@ -69,7 +72,9 @@ class _LoginContentWidgetState extends State<LoginContentWidget> {
             username: username.text.toString(),
             email: email.text.toString(),
             phoneNumber: phoneNumber.text.toString(),
-            password: password.text.toString());
+            password: password.text.toString(),
+            profile: profile);
+
         AuthServices.registerUser(users).then((onValue) {
           Navigator.pushAndRemoveUntil(
             context,
@@ -85,6 +90,12 @@ class _LoginContentWidgetState extends State<LoginContentWidget> {
     }
   }
 
+  void onImageUploaded(String? imageUrl) {
+    setState(() {
+      profile = imageUrl;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -96,10 +107,17 @@ class _LoginContentWidgetState extends State<LoginContentWidget> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Image.asset(
-                    ImagePaths.loginTopImage,
-                    fit: BoxFit.cover,
-                  ),
+                  widget.signUp
+                      ? Center(
+                          child: CircularAvatarWidget(
+                            radius: 75,
+                            uploadedImage: onImageUploaded,
+                          ),
+                        )
+                      : Image.asset(
+                          ImagePaths.loginTopImage,
+                          fit: BoxFit.cover,
+                        ),
                   const SizedBox(
                     height: 30,
                   ),

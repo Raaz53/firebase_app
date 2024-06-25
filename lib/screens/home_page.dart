@@ -4,6 +4,7 @@ import 'package:firebasework/screens/user_page.dart';
 import 'package:firebasework/services/auth.dart';
 import 'package:firebasework/widgets/alert_dialog_box.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 import '../resources/font_structure.dart';
 
@@ -16,6 +17,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -25,7 +27,7 @@ class _HomePageState extends State<HomePage> {
           'FireBase',
           style: FontStructure.heading2,
         ),
-        backgroundColor: Colors.grey[200],
+        backgroundColor: Colors.black54,
         actions: [
           IconButton(
               onPressed: () => AlertDialogBox.sigingOut(context),

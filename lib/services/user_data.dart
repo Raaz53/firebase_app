@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebasework/models/user_model.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 
@@ -21,10 +20,6 @@ class UserData extends GetxController {
       EasyLoading.showError(
         '$error thrown',
       );
-      // Get.snackbar('Error', '$error thrown',
-      //     snackPosition: SnackPosition.BOTTOM,
-      //     colorText: Colors.red,
-      //     backgroundColor: Colors.redAccent.withOpacity(0.1));
     }
   }
 
