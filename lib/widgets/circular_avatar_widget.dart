@@ -1,14 +1,16 @@
+import 'dart:developer';
+import 'dart:io';
+
 import 'package:firebasework/resources/font_structure.dart';
-import 'package:firebasework/services/firebase_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 
 class CircularAvatarWidget extends StatefulWidget {
-  CircularAvatarWidget({super.key, this.radius, this.uploadedImage});
+  const CircularAvatarWidget(
+      {super.key, this.radius, this.uploadedImage, this.existingImage});
 
   final Function(String?)? uploadedImage;
+  final String? existingImage;
 
   final double? radius;
 
@@ -19,13 +21,17 @@ class CircularAvatarWidget extends StatefulWidget {
 class _CircularAvatarWidgetState extends State<CircularAvatarWidget> {
   late XFile? cameraPhoto;
   late XFile? galleryImage;
+  String? picturePath; // = 'assets/sample/user.png';
   ImagePicker imagePicker = ImagePicker();
 
-  onClicked() async {
-    final data = showModalBottomSheet<String>(
-        context: context,
-        backgroundColor: Colors.grey,
-        builder: (c) => Column(
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+        onTap: () async {
+          final img = await showModalBottomSheet<String>(
+            context: context,
+            backgroundColor: Colors.grey,
+            builder: (c) => Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 InkWell(
@@ -33,8 +39,8 @@ class _CircularAvatarWidgetState extends State<CircularAvatarWidget> {
                     cameraPhoto =
                         await imagePicker.pickImage(source: ImageSource.camera);
                     if (cameraPhoto != null) {
-                      String? imageUrl = FirebaseImage.uploadPic(cameraPhoto);
-                      Navigator.of(context).pop(imageUrl);
+                      picturePath = cameraPhoto!.path;
+                      Navigator.pop(context, picturePath);
                     }
                   },
                   splashColor: Colors.transparent,
@@ -53,8 +59,8 @@ class _CircularAvatarWidgetState extends State<CircularAvatarWidget> {
                     galleryImage = await imagePicker.pickImage(
                         source: ImageSource.gallery);
                     if (galleryImage != null) {
-                      String imageUrl = FirebaseImage.uploadPic(cameraPhoto);
-                      Navigator.pop(context, imageUrl);
+                      picturePath = galleryImage!.path;
+                      Navigator.pop(context, picturePath);
                     }
                   },
                   splashColor: Colors.transparent,
@@ -67,19 +73,21 @@ class _CircularAvatarWidgetState extends State<CircularAvatarWidget> {
                   )),
                 ),
               ],
-            ));
-    widget.uploadedImage!(data.toString());
-  }
+            ),
+          );
 
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onClicked,
-      child: CircleAvatar(
-        radius: widget.radius ?? 50,
-        backgroundImage: const NetworkImage(
-            'https://newprofilepic.photo-cdn.net//assets/images/article/profile.jpg?90af0c8'),
-      ),
-    );
+          log('POP IMG : $img');
+          if (img != null) {
+            widget.uploadedImage!(img);
+          }
+        },
+        child: CircleAvatar(
+          radius: widget.radius ?? 50,
+          backgroundImage: picturePath != null
+              ? FileImage(File(picturePath!))
+              : widget.existingImage != null
+                  ? NetworkImage(widget.existingImage!)
+                  : const AssetImage('assets/sample/user.png'),
+        ));
   }
 }

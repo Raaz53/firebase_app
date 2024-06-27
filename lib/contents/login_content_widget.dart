@@ -1,7 +1,9 @@
 import 'dart:developer';
+import 'dart:io';
 import 'package:firebasework/models/user_model.dart';
 import 'package:firebasework/screens/home_page.dart';
 import 'package:firebasework/services/auth.dart';
+import 'package:firebasework/services/firebase_image.dart';
 import 'package:firebasework/widgets/circular_avatar_widget.dart';
 import 'package:firebasework/widgets/circular_icon_widget.dart';
 import 'package:firebasework/widgets/or_sign_up_with_widget.dart';
@@ -34,7 +36,8 @@ class _LoginContentWidgetState extends State<LoginContentWidget> {
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
   TextEditingController phoneNumber = TextEditingController();
-  late String? profile;
+  late String? imagePath;
+  String? imageUrl;
 
   @override
   void dispose() {
@@ -46,7 +49,7 @@ class _LoginContentWidgetState extends State<LoginContentWidget> {
     phoneNumber.dispose();
   }
 
-  void onClicked() {
+  Future<void> onClicked() async {
     setState(() {
       if (buttonColor == Colors.blue) {
         buttonColor = Colors.lightBlueAccent;
@@ -68,12 +71,17 @@ class _LoginContentWidgetState extends State<LoginContentWidget> {
           Utils.toastMessage(error.toString());
         });
       } else {
+        if (imagePath != null) {
+          imageUrl = await FirebaseImage.uploadPic(File(imagePath!));
+          log('image uploaded : $imageUrl');
+        }
+
         UserModel users = UserModel(
             username: username.text.toString(),
             email: email.text.toString(),
             phoneNumber: phoneNumber.text.toString(),
             password: password.text.toString(),
-            profile: profile);
+            profile: imageUrl);
 
         AuthServices.registerUser(users).then((onValue) {
           Navigator.pushAndRemoveUntil(
@@ -90,9 +98,9 @@ class _LoginContentWidgetState extends State<LoginContentWidget> {
     }
   }
 
-  void onImageUploaded(String? imageUrl) {
+  void onImageUploaded(String? uploadedPath) {
     setState(() {
-      profile = imageUrl;
+      imagePath = uploadedPath;
     });
   }
 
@@ -111,7 +119,12 @@ class _LoginContentWidgetState extends State<LoginContentWidget> {
                       ? Center(
                           child: CircularAvatarWidget(
                             radius: 75,
-                            uploadedImage: onImageUploaded,
+                            uploadedImage: (image) {
+                              log('Final image : $image');
+                              setState(() {
+                                imagePath = image;
+                              });
+                            },
                           ),
                         )
                       : Image.asset(
