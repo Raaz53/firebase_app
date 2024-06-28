@@ -1,9 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebasework/models/user_model.dart';
 import 'package:firebasework/resources/font_structure.dart';
 import 'package:firebasework/screens/edit_page.dart';
 import 'package:firebasework/services/auth.dart';
-import 'package:firebasework/services/user_data.dart';
 import 'package:firebasework/widgets/circular_avatar_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -18,6 +16,14 @@ class UserPage extends StatefulWidget {
 
 class _UserPageState extends State<UserPage> {
   UserModel? user;
+
+  Future<void> _refreshUserData() async {
+    final userDetails = await AuthServices.getUserData();
+    setState(() {
+      user = userDetails;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,13 +35,18 @@ class _UserPageState extends State<UserPage> {
         centerTitle: true,
         actions: [
           IconButton(
-              onPressed: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => EditPage(
-                            user: user,
-                          ))),
-              icon: Icon(Icons.edit))
+              onPressed: () async {
+                final result = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => EditPage(
+                              user: user,
+                            )));
+                if (result == true) {
+                  _refreshUserData();
+                }
+              },
+              icon: const Icon(Icons.edit))
         ],
         backgroundColor: Colors.grey[200],
       ),

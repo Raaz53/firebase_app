@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebasework/models/user_model.dart';
 import 'package:firebasework/screens/spash_page.dart';
 import 'package:firebasework/services/user_data.dart';
@@ -32,7 +31,7 @@ class AuthServices {
 
     Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (context) => SplashPage()),
+        MaterialPageRoute(builder: (context) => const SplashPage()),
         (route) => false);
   }
 
@@ -43,5 +42,9 @@ class AuthServices {
     } else {
       Get.snackbar('Error', 'Inside getUserData');
     }
+  }
+
+  static updateUser(UserModel user) async {
+    await userRepo.updateUser(user);
   }
 }

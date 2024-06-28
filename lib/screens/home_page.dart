@@ -27,7 +27,6 @@ class _HomePageState extends State<HomePage> {
           'FireBase',
           style: FontStructure.heading2,
         ),
-        backgroundColor: Colors.black54,
         actions: [
           IconButton(
               onPressed: () => AlertDialogBox.sigingOut(context),

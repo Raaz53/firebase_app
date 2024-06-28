@@ -29,4 +29,19 @@ class UserData extends GetxController {
     final userData = snapshot.docs.map((e) => UserModel.fromDoc(e)).single;
     return userData;
   }
+
+  updateUser(UserModel user) async {
+    try {
+      await _db
+          .collection("users")
+          .doc(user.uid)
+          .update(user.toJson())
+          .whenComplete(() {
+        EasyLoading.showToast('Success your account has been updated.',
+            toastPosition: EasyLoadingToastPosition.bottom);
+      });
+    } catch (error) {
+      print('Errorwhileupdating:${error.toString()}');
+    }
+  }
 }

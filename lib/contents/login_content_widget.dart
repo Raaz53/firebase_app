@@ -98,12 +98,6 @@ class _LoginContentWidgetState extends State<LoginContentWidget> {
     }
   }
 
-  void onImageUploaded(String? uploadedPath) {
-    setState(() {
-      imagePath = uploadedPath;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
